@@ -1,13 +1,13 @@
 from rest_framework import viewsets
-from .models import User, Comunidad, ComunidadMiembros, Publicacion, PublicacionMeGusta, PersonasVetadas
+from .models import Comunidad, ComunidadMiembros, Publicacion, PublicacionMeGusta, PersonasVetadas
 from .serializers import (
-    UserSerializer, ComunidadSerializer, ComunidadMiembrosSerializer,
+    ComunidadSerializer, ComunidadMiembrosSerializer,
     PublicacionSerializer, PublicacionMeGustaSerializer, PersonasVetadasSerializer
 )
 
-class UserViewSet(viewsets.ModelViewSet):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
+# class UserViewSet(viewsets.ModelViewSet):
+#     queryset = User.objects.all()
+#     serializer_class = UserSerializer
 
 class ComunidadViewSet(viewsets.ModelViewSet):
     queryset = Comunidad.objects.all()
