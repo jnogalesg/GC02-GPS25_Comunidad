@@ -29,8 +29,7 @@ class ComunidadDAO:
         Traductor que convierte el Modelo -> DTO
         """
         # 1. SIMULAMOS la llamada al servicio de usuarios
-        # TODO -> Reemplazar por llamada real al servicio
-        artista_dto = ComunidadDAO._get_fake_artista(modelo.id_artista_creador)
+        artista_dto = ComunidadDAO._get_fake_artista(modelo.id_artista_creador) # TODO -> Reemplazar por llamada real al servicio
         
         # 2. Calcular los contadores 
         num_publi = modelo.publicacion_set.count() # Contar publicaciones
@@ -42,7 +41,7 @@ class ComunidadDAO:
         # 4. Construimos el DTO final
         return ComunidadDTO(
             idComunidad=modelo.id,
-            artista=artista_dto, # SUSTITUIR por el DTO real del artista
+            artista=artista_dto, # TODO SUSTITUIR por el DTO real del artista
             nombreComunidad=modelo.nombre_comunidad,
             descComunidad=modelo.desc_comunidad,
             rutaImagen=modelo.ruta_imagen,
@@ -71,16 +70,18 @@ class ComunidadDAO:
 
     @staticmethod
     def create_comunidad(datos: dict) -> ComunidadDTO:
+        datos_modelo = {
+        'id': datos.get('id'),
+        'idArtista': datos.get('idArtista'),
+        'nombreComunidad': datos.get('nombreComunidad'),
+        'descComunidad': datos.get('descComunidad'),
+        'rutaImagen': datos.get('rutaImagen'),
+        'palabrasVetadas': ','.join(datos.get('palabrasVetadas', [])) 
+    }
+        
         # Crea el modelo en la BD
         # **datos es un truco para "desempaquetar" un diccionario
-        nueva_comunidad = Comunidad.objects.create(**datos)
+        nueva_comunidad = Comunidad.objects.create(**datos_modelo)
         
         # Convierte el nuevo modelo en un DTO para devolverlo
-        return ComunidadDTO(
-            id=nueva_comunidad.id,
-            id_artista_creador=nueva_comunidad.id_artista_creador,
-            nombre_comunidad=nueva_comunidad.nombre_comunidad,
-            desc_comunidad=nueva_comunidad.desc_comunidad,
-            ruta_imagen=nueva_comunidad.ruta_imagen,
-            fecha_creacion=nueva_comunidad.fecha_creacion
-        )
+        return ComunidadDAO._to_dto(nueva_comunidad)
