@@ -1,12 +1,15 @@
 from dataclasses import dataclass
 from datetime import datetime
+from .artista_dto import ArtistaDTO
 
 @dataclass
 class ComunidadDTO:
-    id: str
-    id_artista_creador: str
-    nombre_comunidad: str
-    desc_comunidad: str | None # puede ser nulo
-    ruta_imagen: str | None # puede ser nulo
-    fecha_creacion: datetime
-    palabras_vetadas: str | None # puede ser nulo
+    idComunidad: str
+    artista: ArtistaDTO
+    nombreComunidad: str
+    descComunidad: str | None # puede ser nulo
+    rutaImagen: str | None # puede ser nulo
+    fechaCreacion: datetime
+    numPublicaciones: int | None # puede ser nulo
+    numUsuarios: int | None # puede ser nulo
+    palabrasVetadas: list[str] | None # puede ser nulo
