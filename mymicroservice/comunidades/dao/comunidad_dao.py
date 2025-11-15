@@ -1,8 +1,8 @@
 from comunidades.models import Comunidad
 from comunidades.dto.comunidad_dto import ComunidadDTO
 from typing import List
-from mymicroservice.comunidades.dto.artista_dto import ArtistaDTO
-from mymicroservice.comunidades.dto.genero_dto import GeneroDTO
+from comunidades.dto.artista_dto import ArtistaDTO
+from comunidades.dto.genero_dto import GeneroDTO
 
 class ComunidadDAO:
     @staticmethod # TODO -> TEMPORAL HASTA HACER LA CONEXIÓN CON EL ENDPOINT DE USUARIOS
@@ -29,24 +29,24 @@ class ComunidadDAO:
         Traductor que convierte el Modelo -> DTO
         """
         # 1. SIMULAMOS la llamada al servicio de usuarios
-        artista_dto = ComunidadDAO._get_fake_artista(modelo.id_artista_creador) # TODO -> Reemplazar por llamada real al servicio
+        artista_dto = ComunidadDAO._get_fake_artista(modelo.idArtista) # TODO -> Reemplazar por llamada real al servicio
         
         # 2. Calcular los contadores 
         num_publi = modelo.publicacion_set.count() # Contar publicaciones
         num_miem = modelo.comunidadmiembros_set.count() # Contar miembros
 
         # 3. Convertimos palabras vetadas de string -> lista
-        palabras = modelo.palabras_vetadas.split(',') if modelo.palabras_vetadas else []
+        palabras = modelo.palabrasVetadas.split(',') if modelo.palabrasVetadas else []
         
         # 4. Construimos el DTO final
         return ComunidadDTO(
-            idComunidad=modelo.id,
-            artista=artista_dto, # TODO SUSTITUIR por el DTO real del artista
-            nombreComunidad=modelo.nombre_comunidad,
-            descComunidad=modelo.desc_comunidad,
-            rutaImagen=modelo.ruta_imagen,
-            fechaCreacion=modelo.fecha_creacion,
-            numPublicaciones=num_publi, 
+            idComunidad=modelo.idComunidad,
+            artista=artista_dto,
+            nombreComunidad=modelo.nombreComunidad,
+            descComunidad=modelo.descComunidad,
+            rutaImagen=modelo.rutaImagen,
+            fechaCreacion=modelo.fechaCreacion,
+            numPublicaciones=num_publi,
             numUsuarios=num_miem,   
             palabrasVetadas=palabras 
         )
@@ -57,31 +57,74 @@ class ComunidadDAO:
         comunidades_models = Comunidad.objects.all()
         
         # Convierte los modelos en DTOs
-        return [
-            ComunidadDTO(
-                id=c.id,
-                id_artista_creador=c.id_artista_creador,
-                nombre_comunidad=c.nombre_comunidad,
-                desc_comunidad=c.desc_comunidad,
-                ruta_imagen=c.ruta_imagen,
-                fecha_creacion=c.fecha_creacion
-            ) for c in comunidades_models
-        ]
+        return [ComunidadDAO._to_dto(c) for c in comunidades_models]
 
     @staticmethod
-    def create_comunidad(datos: dict) -> ComunidadDTO:
-        datos_modelo = {
-        'id': datos.get('id'),
+    def crear_comunidad(datos: dict) -> ComunidadDTO:
+        datosModelo = {
+        'idComunidad': datos.get('idComunidad'),
         'idArtista': datos.get('idArtista'),
         'nombreComunidad': datos.get('nombreComunidad'),
         'descComunidad': datos.get('descComunidad'),
         'rutaImagen': datos.get('rutaImagen'),
         'palabrasVetadas': ','.join(datos.get('palabrasVetadas', [])) 
-    }
+        }
         
         # Crea el modelo en la BD
         # **datos es un truco para "desempaquetar" un diccionario
-        nueva_comunidad = Comunidad.objects.create(**datos_modelo)
+        nueva_comunidad = Comunidad.objects.create(**datosModelo)
         
         # Convierte el nuevo modelo en un DTO para devolverlo
         return ComunidadDAO._to_dto(nueva_comunidad)
+
+    @staticmethod
+    def get_comunidad_especifica(id: str) -> ComunidadDTO:
+        """
+        Busca UNA comunidad específica por su ID.
+        """
+        try:
+            # 1. Busca en la BD
+            modelo = Comunidad.objects.get(idComunidad=id)
+            
+            # 2. Traduce y devuelve el DTO
+            return ComunidadDAO._to_dto(modelo)
+        except Comunidad.DoesNotExist:
+            raise Exception(f"Comunidad con id {id} no encontrada.")
+
+    @staticmethod
+    def actualizar_comunidad(id: str, datos: dict) -> ComunidadDTO:
+        """
+        Actualiza una comunidad específica.
+        """
+        try:
+            # 1. Busca el objeto a actualizar
+            comunidad = Comunidad.objects.get(idComunidad=id)
+
+            # 2. Actualiza los campos (solo los que vengan en 'datos')
+            # Usamos .get(key, default) para no borrar campos si no vienen
+            comunidad.nombreComunidad = datos.get('nombreComunidad', comunidad.nombreComunidad)
+            comunidad.descComunidad = datos.get('descComunidad', comunidad.descComunidad)
+            comunidad.rutaImagen = datos.get('rutaImagen', comunidad.rutaImagen)
+            
+            if 'palabrasVetadas' in datos:
+                comunidad.palabrasVetadas = ','.join(datos.get('palabrasVetadas', []))
+
+            # 3. Guarda en la BD
+            comunidad.save()
+            
+            # 4. Devuelve el DTO actualizado y "cocinado"
+            return ComunidadDAO._to_dto(comunidad)
+        except Comunidad.DoesNotExist:
+            raise Exception(f"Comunidad con id {id} no encontrada.")
+
+    @staticmethod
+    def eliminar_comunidad(id: str):
+        """
+        Borra una comunidad por su ID.
+        """
+        try:
+            comunidad = Comunidad.objects.get(idComunidad=id)
+            comunidad.delete()
+            # No se devuelve nada, el Controller dará un 204
+        except Comunidad.DoesNotExist:
+            raise Exception(f"Comunidad con id {id} no encontrada.")

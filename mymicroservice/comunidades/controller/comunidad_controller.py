@@ -2,44 +2,86 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from comunidades.dao.comunidad_dao import ComunidadDAO
-import dataclasses # Para convertir DTOs a diccionarios
+import dataclasses 
+import traceback # Para ver errores completos
 
 class ComunidadController(APIView):
     
-    def get(self, request):
-        # 1. Pide al DAO
-        comunidades_dtos = ComunidadDAO.get_all_comunidades()
-        
-        # 2. Convierte DTOs a diccionarios para el JSON
-        data = [dataclasses.asdict(dto) for dto in comunidades_dtos]
-        
-        # 3. Responde
-        return Response(data, status=status.HTTP_200_OK)
+    def get(self, request, idComunidad=None):
+        """
+        Realiza GET comunidad/ (lista de todas las comunidades) 
+        GET comunidad/{idComunidad} (comunidad especifica)
+        """
+        if idComunidad:
+            try:
+                # 1. Pide al DAO UN objeto
+                comunidad_dto = ComunidadDAO.get_comunidad_especifica(idComunidad)
+                return Response(dataclasses.asdict(comunidad_dto), status=status.HTTP_200_OK)
+            except Exception as e:
+                return Response({"error": f"Comunidad no encontrada: {e}"}, status=status.HTTP_404_NOT_FOUND)
+        else:
+            # 1. Pide al DAO
+            comunidades_dtos = ComunidadDAO.get_all_comunidades()
+            # 2. Convierte DTOs a diccionarios para el JSON
+            data = [dataclasses.asdict(dto) for dto in comunidades_dtos]
+            # 3. Responde
+            return Response(data, status=status.HTTP_200_OK)
 
-    def post(self, request):
-        # 1. Valida los datos (básico)
+    def post(self, request, idComunidad=None):
+        """
+        Realiza POST en comunidad/ (crear una nueva comunidad)
+        """
         datos_entrada = request.data
-        if not datos_entrada.get('id') or \
-           not datos_entrada.get('id_artista_creador') or \
-           not datos_entrada.get('nombre_comunidad'):
-            return Response({"error": "Datos incompletos"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        # 1. Valida los datos que nos envía el frontend
+        if not datos_entrada.get('idComunidad') or \
+           not datos_entrada.get('idArtista') or \
+           not datos_entrada.get('nombreComunidad'):
+            return Response({"error": "Datos incompletos (idComunidad, idArtista, nombreComunidad)"}, status=status.HTTP_400_BAD_REQUEST)
         
         try:
-            # 2. Pide al DAO que cree el objeto
-            # Pasamos solo los datos que espera el DAO
-            datos_para_crear = {
-                'id': datos_entrada.get('id'),
-                'id_artista_creador': datos_entrada.get('id_artista_creador'),
-                'nombre_comunidad': datos_entrada.get('nombre_comunidad'),
-                'desc_comunidad': datos_entrada.get('desc_comunidad'),
-                'ruta_imagen': datos_entrada.get('ruta_imagen'),
-            }
+            # 2. Pasa los datos al DAO para que los cree
+            # El DAO se encargará de traducirlos al modelo
+            nuevo_dto = ComunidadDAO.crear_comunidad(datos_entrada)
             
-            nuevo_dto = ComunidadDAO.create_comunidad(datos_para_crear)
-            
-            # 3. Responde con el nuevo objeto creado
+            # 3. Responde con el DTO completo
             return Response(dataclasses.asdict(nuevo_dto), status=status.HTTP_201_CREATED)
         
         except Exception as e:
-            # Captura errores (ej. 'nombre_comunidad' duplicado)
+            traceback.print_exc() # Muestra el error real en tu consola
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        
+        
+    def put(self, request, idComunidad=None):
+        """
+        Realiza PUT comunidad/ (Actualizar una comunidad existent)
+        """
+
+        # comprueba que la url tenga un idComunidad válido
+        if not idComunidad:
+            return Response({"error": "Falta idComunidad en la URL para actualizar"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        # se cogen los datos del body para hacer la actualización
+        datos_entrada = request.data
+
+        try:
+            # llama al método del DAO para actualizar la comunidad
+            comunidad_actualizada = ComunidadDAO.actualizar_comunidad(idComunidad, datos_entrada)
+            return Response(dataclasses.asdict(comunidad_actualizada), status=status.HTTP_200_OK)
+        except Exception as e:
+            traceback.print_exc()
+            return Response({"error": str(e)}, status=status.HTTP_404_NOT_FOUND)
+
+    def delete(self, request, idComunidad=None):
+        """
+        Realiza DELETE comunidad/{idComunidad} (Borrar una comunidad existente)
+        """
+        if not idComunidad:
+            return Response({"error": "Falta idComunidad en la URL"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        try:
+            ComunidadDAO.eliminar_comunidad(idComunidad)
+            return Response(status=status.HTTP_204_NO_CONTENT) # 204 = Éxito, sin respuesta
+        except Exception as e:
+            traceback.print_exc()
+            return Response({"error": str(e)}, status=status.HTTP_404_NOT_FOUND)

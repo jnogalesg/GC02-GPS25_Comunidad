@@ -6,7 +6,7 @@ from django.db import models
 
 class Comunidad(models.Model):
     # Id de la comunidad
-    id = models.CharField(max_length=255, primary_key=True)
+    idComunidad = models.CharField(max_length=255, primary_key=True)
     # Id del artista que crea la comunidad
     idArtista = models.CharField(max_length=255)
     # Nombre de la comunidad
