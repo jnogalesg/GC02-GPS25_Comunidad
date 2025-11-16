@@ -57,6 +57,10 @@ Este proyecto utiliza **SQLite** por defecto, por lo que no requiere un servidor
 
 1.  Aplica las migraciones para crear las tablas en el archivo `db.sqlite3`:
     ```bash
+    # Crea las migraciones a partir de los modelos (solo si has modificado modelos o no hay migraciones)
+    python mymicroservice/manage.py makemigrations
+
+    # Aplica las migraciones a la base de datos
     python mymicroservice/manage.py migrate
     ```
 
