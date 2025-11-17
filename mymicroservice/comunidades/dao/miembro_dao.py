@@ -59,12 +59,8 @@ class MiembroDAO:
         SIMULACIÓN del servicio de usuarios.
         TODO -> Reemplazar por llamada real al servicio
         """
-        # return MiembroDTO(
-        #     idUsuario=id,
-        #     nombreUsuario=f"UsuarioPrueba{id}",
-        #     esArtista=False,
-        #     rutaFoto=None
-        # )
+        
+        # como es solo una prueba, se crea en el momento un miembro con el id establecido 
         return MiembroDTO(
             usuario,
             f"UsuarioPrueba{usuario}",
@@ -73,28 +69,48 @@ class MiembroDAO:
         )
 
     @staticmethod
-    def get_miembros_por_comunidad(comunidad: str) -> List[MiembroDTO]:
-            """
-            Devuelve la lista de miembros (DTOs) de una comunidad.
-            """
-            # 1. Busca en nuestra BD local los IDs de los miembros
-            miembros_models = ComunidadMiembros.objects.filter(idComunidad=comunidad)
+    def get_miembros_comunidad(comunidad: str) -> List[MiembroDTO]:
+        """
+        Devuelve la lista de miembros (DTOs) de una comunidad.
+        """
+        # 1. Busca en nuestra BD local los IDs de los miembros
+        miembros_models = ComunidadMiembros.objects.filter(idComunidad_id=comunidad)
+        
+        # 2. Prepara cada DTO (esto hará múltiples llamadas al servicio de usuarios para recuperarlos a todos)
+        return [MiembroDAO._to_dto(m) for m in miembros_models] 
             
-            # 2. Prepara cada DTO (esto hará múltiples llamadas al servicio de usuarios para recuperarlos a todos)
-            return [MiembroDAO._to_dto(m) for m in miembros_models] 
-            #return [MiembroDAO._get_fake_miembro(m.idUsuario) for m in miembros_models] # TODO TEMPORAL CAMBIAR
+    @staticmethod
+    def get_miembro_especifico(comunidad_id: str, usuario_id: str) -> MiembroDTO:
+        """
+        Busca un miembro específico dentro de una comunidad.
+        """
+        try:
+            # Usamos idComunidad_id para evitar el error de "must be instance"
+            miembro = ComunidadMiembros.objects.get(idComunidad_id=comunidad_id, idUsuario=usuario_id)
+            
+            # Convertimos el modelo encontrado a DTO
+            return MiembroDAO._to_dto(miembro)
+        except ComunidadMiembros.DoesNotExist:
+            raise Exception(f"El usuario {usuario_id} no existe o no pertenece a la comunidad {comunidad_id}.")
         
     @staticmethod
     def add_miembro(comunidad: str, usuario: str):
-            """
-            Añade un usuario a una comunidad.
-            """
-            nuevo_miembro = ComunidadMiembros.objects.create(
-                idComunidad=comunidad,
-                idUsuario=usuario
-            )
-            #return nuevo_miembro # Devolvemos el modelo simple
-            return MiembroDAO._get_fake_miembro(usuario) # TODO TEMPORAL CAMBIAR
+        """
+        Añade un usuario a una comunidad.
+        """
+        
+        # si ya existe el miembro en la comunidad, lanza una excepción
+        if ComunidadMiembros.objects.filter(idComunidad=comunidad, idUsuario=usuario).exists():
+            raise Exception("El usuario ya es miembro de la comunidad.")
+        
+        nuevo_miembro = ComunidadMiembros.objects.create(
+            idComunidad_id=comunidad,  # se añade _id para asignar directamente el id de la comunidad
+            idUsuario=usuario
+        )
+        #return nuevo_miembro # Devolvemos el modelo simple
+        #return MiembroDAO._get_fake_miembro(usuario) # TODO TEMPORAL CAMBIAR
+        return MiembroDAO._to_dto(nuevo_miembro) # devolver DTO real (o fake según implementación)
+
         
     @staticmethod
     def eliminar_miembro(comunidad: str, usuario: str):
@@ -103,7 +119,7 @@ class MiembroDAO:
         """
         try:
             # se busca el miembro de la comunidad que se quiere eliminar
-            miembro = ComunidadMiembros.objects.get(idComunidad=comunidad, idUsuario=usuario)
+            miembro = ComunidadMiembros.objects.get(idComunidad_id=comunidad, idUsuario=usuario) # idComunidad_id para buscar por id directamente
             # si se encuentra, se elimina el miembro de la comunidad
             miembro.delete()
             # No se devuelve nada, el Controller dará un 204

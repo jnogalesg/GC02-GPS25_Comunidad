@@ -5,7 +5,7 @@ from .artista_dto import ArtistaDTO
 @dataclass
 class ComunidadDTO:
     idComunidad: str
-    artista: ArtistaDTO
+    artista: ArtistaDTO # se pasa el objeto ARTISTA completo
     nombreComunidad: str
     descComunidad: str | None # puede ser nulo
     rutaImagen: str | None # puede ser nulo

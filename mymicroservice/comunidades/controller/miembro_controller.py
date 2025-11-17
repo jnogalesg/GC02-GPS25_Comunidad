@@ -7,18 +7,23 @@ import traceback
 
 class MiembroController(APIView):
 
-    def get(self, request, idComunidad=None):
+    def get(self, request, idComunidad=None, idMiembro=None):
         """
-        Maneja GET /comunidad/miembros/<idComunidad>/
-        (Devuelve la lista de miembros de esa comunidad)
+        Maneja GET /comunidad/miembros/<idComunidad>/ (Todos los miembros de la comunidad)
+        y GET /comunidad/miembros/<idComunidad>/<idMiembro>/ (Miembro específico)
         """
         try:
-            # 1. Llama al DAO 
-            miembros_dtos = MiembroDAO.get_miembros_por_comunidad(idComunidad)
-            # 2. Convierte DTOs a JSON
-            data = [dataclasses.asdict(dto) for dto in miembros_dtos]
-            # 3. Devuelve el miembro correspondiente al idComunidad
-            return Response(data, status=status.HTTP_200_OK)
+            if idMiembro:
+                # --- CASO 1: Miembro específico ---
+                miembro_dto = MiembroDAO.get_miembro_especifico(idComunidad, idMiembro)
+                return Response(dataclasses.asdict(miembro_dto), status=status.HTTP_200_OK)
+            
+            else:
+                # --- CASO 2: Todos los miembros de la comunidad ---
+                miembros_dtos = MiembroDAO.get_miembros_comunidad(idComunidad)
+                data = [dataclasses.asdict(dto) for dto in miembros_dtos]
+                return Response(data, status=status.HTTP_200_OK)
+                
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_404_NOT_FOUND)
 
