@@ -2,8 +2,6 @@ from django.db import models
 
 # Creación de las tablas para el end-point
 
-# No se crea una tabla usuarios ya que esta tabla ya existe en otro endpoint
-
 class Comunidad(models.Model):
     # Id de la comunidad
     idComunidad = models.CharField(max_length=255, primary_key=True)

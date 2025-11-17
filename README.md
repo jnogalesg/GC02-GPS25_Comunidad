@@ -49,7 +49,7 @@ Sigue estos pasos para clonar, instalar y ejecutar el servidor en tu máquina lo
     ```bash
     pip install -r requirements.txt
     ```
-    *`requirements.txt` incluye la instalación de Django, Django REST Framework y Requests*
+    *`requirements.txt` incluye la instalación de Django, Django REST Framework, request y otras dependecias necesarias*
 
 ### 3. Configuración de la Base de Datos
 

@@ -6,7 +6,7 @@ from comunidades.dto.genero_dto import GeneroDTO
 
 class ComunidadDAO:
     @staticmethod # TODO -> TEMPORAL HASTA HACER LA CONEXIÓN CON EL ENDPOINT DE USUARIOS
-    def _get_fake_artista(artista_id: str) -> ArtistaDTO:
+    def _get_fake_artista(artista: str) -> ArtistaDTO:
         """
         # Esta función SIMULA la llamada al microservicio de usuarios.
         """
@@ -15,8 +15,8 @@ class ComunidadDAO:
         
         # 2. Nos inventamos un Artista Falso
         return ArtistaDTO(
-            id=int(artista_id) if artista_id.isdigit() else 0,
-            nombreUsuario=f"Sabrina Carpintera {artista_id}",
+            idArtista=int(artista) if artista.isdigit() else 0,
+            nombreUsuario=f"artistaPrueba{artista}",
             esNovedad=False,
             oyentes=37000000,
             genero=genero_falso,
@@ -78,27 +78,27 @@ class ComunidadDAO:
         return ComunidadDAO._to_dto(nueva_comunidad)
 
     @staticmethod
-    def get_comunidad_especifica(id: str) -> ComunidadDTO:
+    def get_comunidad_especifica(comunidad: str) -> ComunidadDTO:
         """
         Busca UNA comunidad específica por su ID.
         """
         try:
             # 1. Busca en la BD
-            modelo = Comunidad.objects.get(idComunidad=id)
+            modelo = Comunidad.objects.get(idComunidad=comunidad)
             
             # 2. Traduce y devuelve el DTO
             return ComunidadDAO._to_dto(modelo)
         except Comunidad.DoesNotExist:
-            raise Exception(f"Comunidad con id {id} no encontrada.")
+            raise Exception(f"Comunidad con id {comunidad} no encontrada.")
 
     @staticmethod
-    def actualizar_comunidad(id: str, datos: dict) -> ComunidadDTO:
+    def actualizar_comunidad(comunidad: str, datos: dict) -> ComunidadDTO:
         """
         Actualiza una comunidad específica.
         """
         try:
             # 1. Busca el objeto a actualizar
-            comunidad = Comunidad.objects.get(idComunidad=id)
+            comunidad = Comunidad.objects.get(idComunidad=comunidad)
 
             # 2. Actualiza los campos (solo los que vengan en 'datos')
             # Usamos .get(key, default) para no borrar campos si no vienen
@@ -115,15 +115,15 @@ class ComunidadDAO:
             # 4. Devuelve el DTO actualizado y "cocinado"
             return ComunidadDAO._to_dto(comunidad)
         except Comunidad.DoesNotExist:
-            raise Exception(f"Comunidad con id {id} no encontrada.")
+            raise Exception(f"Comunidad con id {comunidad} no encontrada.")
 
     @staticmethod
-    def eliminar_comunidad(id: str):
+    def eliminar_comunidad(comunidad: str):
         """
         Borra una comunidad por su ID.
         """
         try:
-            comunidad = Comunidad.objects.get(idComunidad=id)
+            comunidad = Comunidad.objects.get(idComunidad=comunidad)
             comunidad.delete()
             # No se devuelve nada, el Controller dará un 204
         except Comunidad.DoesNotExist:
