@@ -1,35 +1,57 @@
+from django.conf import settings
+import requests
 from comunidades.models import Comunidad
 from comunidades.dto.comunidad_dto import ComunidadDTO
 from typing import List
 from comunidades.dto.artista_dto import ArtistaDTO
 from comunidades.dto.genero_dto import GeneroDTO
 
-class ComunidadDAO:
-    @staticmethod # TODO -> TEMPORAL HASTA HACER LA CONEXIÓN CON EL ENDPOINT DE USUARIOS
-    def _get_fake_artista(artista: str) -> ArtistaDTO:
-        """
-        # Esta función SIMULA la llamada al microservicio de usuarios.
-        """
-        # 1. Nos inventamos un Genero Falso
-        genero_falso = GeneroDTO(id=1, nombre="Pop Folklórico")
-        
-        # 2. Nos inventamos un Artista Falso
-        return ArtistaDTO(
-            idArtista=str(artista),
-            nombreUsuario=f"artistaPrueba{artista}",
-            esNovedad=False,
-            oyentes=37000000,
-            genero=genero_falso,
-            rutaFoto=None
-        )
+USER_SERVICE_URL = settings.USER_MICROSERVICE_URL
 
+class ComunidadDAO:
+       
+    @staticmethod 
+    def get_artista(artista: str) -> ArtistaDTO:
+        """
+        # Esta función realiza la llamada al microservicio de usuarios para obtener al artista con el id especificado.
+        Si falla o no encuentra al artista, LANZA UNA EXCEPCIÓN.
+        """        
+        # Llamamos al microservicio de usuarios para obtener el artista real
+        url_destino = f"{settings.USER_MICROSERVICE_URL}artistas/{artista}"      
+        
+        try:
+            # 2. Hacemos la petición GET
+            response = requests.get(url_destino, timeout=5) # timeout es buena práctica
+            
+            # 3. Si la respuesta es OK (200)
+            if response.status_code == 200:
+                data = response.json()
+                
+                # Mapeamos el JSON recibido al ArtistaDTO
+                return ArtistaDTO(
+                    idArtista=str(data.get('id')),
+                    nombreUsuario=data.get('nombreusuario'),
+                    rutaFoto=data.get('rutafoto'),
+                    esNovedad=data.get('esnovedad'),
+                    oyentes=data.get('oyentes'),
+                    genero=data.get('genero', None) # Puede ser nulo
+                )
+            else:
+                # Si el artista no existe o hay error 404/500
+                raise Exception(f"Error al obtener artista {artista}: El servicio respondió {response.status_code}")
+                
+        except requests.RequestException as e:
+            # Si el servidor está caído o no hay conexión
+            raise Exception(f"Error de conexión con el microservicio de usuarios: {str(e)}")
+        
     @staticmethod
     def _to_dto(modelo: Comunidad) -> ComunidadDTO:
         """
         Traductor que convierte el Modelo -> DTO
         """
         # 1. SIMULAMOS la llamada al servicio de usuarios
-        artista_dto = ComunidadDAO._get_fake_artista(modelo.idArtista) # TODO -> Reemplazar por llamada real al servicio
+        # artista_dto = ComunidadDAO._get_fake_artista(modelo.idArtista) # TODO -> Reemplazar por llamada real al servicio
+        artista_dto = ComunidadDAO.get_artista(str(modelo.idArtista)) # Llamada real al servicio de Usuarios para obtener el artista
         
         # 2. Calcular los contadores 
         num_publi = modelo.publicacion_set.count() # Contar publicaciones
@@ -111,7 +133,7 @@ class ComunidadDAO:
             # 3. Guarda en la BD
             comunidad.save()
             
-            # 4. Devuelve el DTO actualizado y "cocinado"
+            # 4. Devuelve el DTO actualizado
             return ComunidadDAO._to_dto(comunidad)
         except Comunidad.DoesNotExist:
             raise Exception(f"Comunidad con id {comunidad} no encontrada.")

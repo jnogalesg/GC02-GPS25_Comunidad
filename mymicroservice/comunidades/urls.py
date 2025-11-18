@@ -4,6 +4,7 @@ from comunidades.controller.comunidad_controller import ComunidadController
 from comunidades.controller.miembro_controller import MiembroController
 from comunidades.controller.publicacion_controller import PublicacionController
 from comunidades.controller.publicacionMeGusta_controller import PublicacionMeGustaController
+from comunidades.controller.personasVetadas_controller import PersonasVetadasController
 
 urlpatterns = [
 
@@ -28,4 +29,11 @@ urlpatterns = [
     path('publicaciones/<str:idComunidad>/', PublicacionController.as_view()),
     # GET (específica), DELETE (borrar)
     path('publicaciones/<str:idComunidad>/<str:idPublicacion>/', PublicacionController.as_view()),
+    
+    # --- Personas Vetadas ---
+    # GET (lista), POST (vetar)
+    path('vetados/<str:idComunidad>/', PersonasVetadasController.as_view()),
+    
+    # DELETE (quitar veto)
+    path('vetados/<str:idComunidad>/<str:idMiembro>/', PersonasVetadasController.as_view()),
 ]

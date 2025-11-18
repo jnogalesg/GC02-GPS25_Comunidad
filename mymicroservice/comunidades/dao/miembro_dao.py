@@ -1,10 +1,11 @@
+from django.conf import settings
 from comunidades.models import ComunidadMiembros
 from comunidades.dto.miembro_dto import MiembroDTO
 from typing import List
 from pyexpat import model
 import requests
 
-# USER_SERVICE_URL = "http://url-del-servicio-de-usuarios/api/users/" TODO usar cuando se desplique el servicio real
+USER_SERVICE_URL = settings.USER_MICROSERVICE_URL
 
 class MiembroDAO:
     # @staticmethod

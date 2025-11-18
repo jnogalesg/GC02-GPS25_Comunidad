@@ -8,4 +8,4 @@ class ArtistaDTO:
     rutaFoto: str | None  # puede ser nulo
     esNovedad: bool
     oyentes: int
-    genero: GeneroDTO # hace referencia a un objeto Genero
+    genero: GeneroDTO | None # hace referencia a un objeto Genero

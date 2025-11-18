@@ -6,7 +6,7 @@ class Comunidad(models.Model):
     # Id de la comunidad - lo genera automaticamente django para cada comunidad que se vaya creando
     idComunidad = models.AutoField(primary_key=True) 
     # Id del artista que crea la comunidad
-    idArtista = models.CharField(max_length=255)
+    idArtista = models.CharField(max_length=255) # TODO añadir unique=True 
     # Nombre de la comunidad
     nombreComunidad = models.CharField(max_length=100, unique=True)
     # Descripción de la comunidad
@@ -17,6 +17,12 @@ class Comunidad(models.Model):
     fechaCreacion = models.DateTimeField(auto_now_add=True)
     # Lista de palabras vetadas en la comunidad (lista separada por comas)
     palabrasVetadas = models.TextField(blank=True, null=True)
+    
+    # Creación de restricción
+    # class Meta:
+    #     # Un usuario no puede estar más de una vez en la misma comunidad
+    #     # CADA IDARTISTAS SOLO PUEDE CREAR UNA VEZ POR CADA ID_COMUNIDAD
+    #     unique_together = ('idComunidad', 'idArtista')
 
     def __str__(self):
         return self.nombreComunidad
