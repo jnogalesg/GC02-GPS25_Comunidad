@@ -14,7 +14,7 @@ class PublicacionDAO:
         likes = getattr(modelo, 'meGusta', modelo.publicacionmegusta_set.count())
 
         return PublicacionDTO(
-            idPublicacion=modelo.id,
+            idPublicacion=modelo.idPublicacion,
             idComunidad=modelo.idComunidad.idComunidad, # Accedemos al ID del objeto comunidad
             titulo=modelo.titulo,
             contenido=modelo.contenido,
@@ -36,26 +36,26 @@ class PublicacionDAO:
         return [PublicacionDAO._to_dto(p) for p in publicaciones]
 
     @staticmethod
-    def get_publicacion_especifica(idPublicacion: str) -> PublicacionDTO:
+    def get_publicacion_especifica(publicacion: str) -> PublicacionDTO:
         """
         Devuelve una publicación específica por su ID.
         """
         try:
             p = Publicacion.objects.annotate(
                 num_megusta=Count('publicacionmegusta')
-            ).get(id=idPublicacion)
+            ).get(idPublicacion=publicacion)
             return PublicacionDAO._to_dto(p)
         except Publicacion.DoesNotExist:
-            raise Exception(f"Publicación {idPublicacion} no encontrada")
+            raise Exception(f"Publicación {publicacion} no encontrada")
 
     @staticmethod
     def crear_publicacion(datos: dict, idComunidad: str) -> PublicacionDTO:
         """
         Crea una nueva publicación en una comunidad específica.
         """
+        
         # Traducimos nombres del DTO -> Modelo
         datos_modelo = {
-            'id': datos.get('idPublicacion'),
             'idComunidad_id': idComunidad, # _id para pasar el id directamente y no el objeto comunidad
             'titulo': datos.get('titulo'),
             'contenido': datos.get('contenido'),
@@ -66,12 +66,36 @@ class PublicacionDAO:
         return PublicacionDAO._to_dto(nuevaPublicacion)
     
     @staticmethod
-    def eliminar_publicacion(idPublicacion: str):
+    def actualizar_publicacion(id_publicacion: str, datos: dict) -> PublicacionDTO:
+        """
+        Actualiza parcialmente una publicación.
+        """
+        try:
+            # 1. Buscamos la publicación
+            publicacion = Publicacion.objects.get(idPublicacion=id_publicacion)
+            
+            # 2. Actualizamos SOLO los campos que vengan en el diccionario 'datos'
+            # Usamos .get('campo', valor_actual) para no borrar lo que ya había si no envían ese campo.
+            publicacion.titulo = datos.get('titulo', publicacion.titulo)
+            publicacion.contenido = datos.get('contenido', publicacion.contenido)
+            publicacion.rutaFichero = datos.get('rutaFichero', publicacion.rutaFichero)
+            
+            # 3. Guardamos cambios en BD
+            publicacion.save()
+            
+            # 4. Devolvemos el DTO actualizado
+            return PublicacionDAO._to_dto(publicacion)
+            
+        except Publicacion.DoesNotExist:
+            raise Exception(f"Publicación {id_publicacion} no encontrada")
+    
+    @staticmethod
+    def eliminar_publicacion(publicacion: str):
         """
         Elimina una publicación específica por su ID.
         """
         try:
-            p = Publicacion.objects.get(id=idPublicacion)
+            p = Publicacion.objects.get(idPublicacion=publicacion)
             p.delete()
         except Publicacion.DoesNotExist:
-             raise Exception(f"Publicación {idPublicacion} no encontrada")
+             raise Exception(f"Publicación {publicacion} no encontrada")

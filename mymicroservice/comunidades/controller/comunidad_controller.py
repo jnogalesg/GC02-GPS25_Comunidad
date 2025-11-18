@@ -34,10 +34,9 @@ class ComunidadController(APIView):
         datos_entrada = request.data
         
         # 1. Valida los datos que nos envía el frontend
-        if not datos_entrada.get('idComunidad') or \
-           not datos_entrada.get('idArtista') or \
+        if not datos_entrada.get('idArtista') or \
            not datos_entrada.get('nombreComunidad'):
-            return Response({"error": "Datos incompletos (idComunidad, idArtista, nombreComunidad)"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": "Datos incompletos (idArtista, nombreComunidad)"}, status=status.HTTP_400_BAD_REQUEST)
         
         try:
             # 2. Pasa los datos al DAO para que los cree

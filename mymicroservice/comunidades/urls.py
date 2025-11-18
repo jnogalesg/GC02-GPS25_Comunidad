@@ -3,20 +3,25 @@ from rest_framework.routers import DefaultRouter
 from comunidades.controller.comunidad_controller import ComunidadController 
 from comunidades.controller.miembro_controller import MiembroController
 from comunidades.controller.publicacion_controller import PublicacionController
+from comunidades.controller.publicacionMeGusta_controller import PublicacionMeGustaController
 
 urlpatterns = [
 
     # --- Comunidades ---
-    # YAML path: comunidad/ (GET, POST)
+    # GET (lista de todas), POST (crear)
     path('', ComunidadController.as_view()), 
-    # YAML path: comunidad/{idComunidad} (GET, DELETE, PUT)
+    # GET (específica), DELETE (borrar), PUT (actualizar)
     path('<str:idComunidad>/', ComunidadController.as_view()),
 
     # --- Miembros --- 
-    # YAML path: comunidad/miembros/{idComunidad} (GET, POST)
+    # GET (lista), POST (añadir)
     path('miembros/<str:idComunidad>/', MiembroController.as_view()),
-    # YAML path: comunidad/miembros/{idComunidad}/{idMiembro} (DELETE)
+    # GET (específico), DELETE (borrar)
     path('miembros/<str:idComunidad>/<str:idMiembro>/', MiembroController.as_view()),
+    
+    # --- Me Gusta en Publicaciones ---
+    # POST, GET y DELETE (específicos) 
+    path('publicaciones/megusta/<str:idPublicacion>/', PublicacionMeGustaController.as_view()),
     
     # --- Publicaciones ---
     # GET (lista), POST (crear)

@@ -36,8 +36,8 @@ class PublicacionController(APIView):
         
         datos = request.data
         # Validación básica (puedes ampliarla)
-        if not datos.get('idPublicacion') or not datos.get('titulo'):
-             return Response({"error": "Faltan datos obligatorios"}, status=status.HTTP_400_BAD_REQUEST)
+        if not datos.get('titulo'):
+             return Response({"error": "Faltan datos obligatorios (titulo)"}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
             nuevo_dto = PublicacionDAO.crear_publicacion(datos, idComunidad)
@@ -45,6 +45,26 @@ class PublicacionController(APIView):
         except Exception as e:
             traceback.print_exc()
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        
+    def patch(self, request, idComunidad=None, idPublicacion=None):
+        """
+        PATCH /comunidad/publicaciones/{idComunidad}/{idPublicacion}/
+        (Editar publicación)
+        """
+        if not idPublicacion:
+             return Response({"error": "Falta idPublicacion en la URL"}, status=status.HTTP_400_BAD_REQUEST)
+
+        datos_entrada = request.data
+        
+        try:
+            # Llamamos al DAO para actualizar
+            publicacion_actualizada_dto = PublicacionDAO.actualizar_publicacion(idPublicacion, datos_entrada)
+            
+            return Response(dataclasses.asdict(publicacion_actualizada_dto), status=status.HTTP_200_OK)
+            
+        except Exception as e:
+            traceback.print_exc()
+            return Response({"error": str(e)}, status=status.HTTP_404_NOT_FOUND)
 
     def delete(self, request, idComunidad=None, idPublicacion=None):
         """

@@ -15,7 +15,7 @@ class ComunidadDAO:
         
         # 2. Nos inventamos un Artista Falso
         return ArtistaDTO(
-            idArtista=int(artista) if artista.isdigit() else 0,
+            idArtista=str(artista),
             nombreUsuario=f"artistaPrueba{artista}",
             esNovedad=False,
             oyentes=37000000,
@@ -40,7 +40,7 @@ class ComunidadDAO:
         
         # 4. Construimos el DTO final
         return ComunidadDTO(
-            idComunidad=modelo.idComunidad,
+            idComunidad=str(modelo.idComunidad),
             artista=artista_dto,
             nombreComunidad=modelo.nombreComunidad,
             descComunidad=modelo.descComunidad,
@@ -62,7 +62,6 @@ class ComunidadDAO:
     @staticmethod
     def crear_comunidad(datos: dict) -> ComunidadDTO:
         datosModelo = {
-        'idComunidad': datos.get('idComunidad'),
         'idArtista': datos.get('idArtista'),
         'nombreComunidad': datos.get('nombreComunidad'),
         'descComunidad': datos.get('descComunidad'),

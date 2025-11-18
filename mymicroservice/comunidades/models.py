@@ -3,8 +3,8 @@ from django.db import models
 # Creación de las tablas para el end-point
 
 class Comunidad(models.Model):
-    # Id de la comunidad
-    idComunidad = models.CharField(max_length=255, primary_key=True)
+    # Id de la comunidad - lo genera automaticamente django para cada comunidad que se vaya creando
+    idComunidad = models.AutoField(primary_key=True) 
     # Id del artista que crea la comunidad
     idArtista = models.CharField(max_length=255)
     # Nombre de la comunidad
@@ -41,8 +41,8 @@ class ComunidadMiembros(models.Model):
 
 
 class Publicacion(models.Model):
-    # Id de la publicación
-    id = models.CharField(max_length=255, primary_key=True)
+    # Id de la publicación - lo genera automaticamente django para cada publicación que se vaya creando
+    idPublicacion = models.AutoField(primary_key=True)
     # Id de la comunidad a la que pertenece la publicación
     idComunidad = models.ForeignKey(Comunidad, on_delete=models.CASCADE)
     # Título de la publicación
@@ -53,6 +53,12 @@ class Publicacion(models.Model):
     rutaFichero = models.CharField(max_length=255, blank=True, null=True)
     # Fecha de creación de la publicación
     fechaPublicacion = models.DateTimeField(auto_now_add=True)
+    
+    # Creación de restricción
+    class Meta:
+        # Una publicación debe ser única dentro de una comunidad
+        # CADA IDPUBLICACION SOLO PUEDE APARECER UNA VEZ POR CADA IDCOMUNIDAD
+        unique_together = ('idPublicacion', 'idComunidad')    
 
     def __str__(self):
         return self.titulo
@@ -64,12 +70,12 @@ class PublicacionMeGusta(models.Model):
     # Id del usuario que dio me gusta
     idUsuario = models.CharField(max_length=255)
     # Fecha en la que se dio el me gusta
-    fechaMegusta = models.DateTimeField(auto_now_add=True)
+    fechaMeGusta = models.DateTimeField(auto_now_add=True)
 
     # Creación de restricción
     class Meta:
         # Un usuario no puede dar más de un me gusta a la misma publicación
-        # CADA ID_USUARIO SOLO PUEDE APARECER UNA VEZ POR CADA ID_PUBLICACION
+        # CADA IDUSUARIO SOLO PUEDE APARECER UNA VEZ POR CADA IDPUBLICACION
         unique_together = ('idPublicacion', 'idUsuario')
 
     def __str__(self):
@@ -87,7 +93,7 @@ class PersonasVetadas(models.Model):
     # Creación de restricción
     class Meta:
         # Un miembro no puede ser vetado más de una vez en la misma comunidad
-        # CADA ID_MIEMBRO SOLO PUEDE APARECER UNA VEZ POR CADA ID_COMUNIDAD
+        # CADA IDMIEMBRO SOLO PUEDE APARECER UNA VEZ POR CADA IDCOMUNIDAD
         unique_together = ('idComunidad', 'idMiembro')
 
     def __str__(self):
