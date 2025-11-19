@@ -8,32 +8,44 @@ import requests
 USER_SERVICE_URL = settings.USER_MICROSERVICE_URL
 
 class MiembroDAO:
-    # @staticmethod
-    # def get_miembros():
-        
-    #     usuario_id = model.id_usuario
+    @staticmethod
+    def get_miembros(usuario: str) -> MiembroDTO:
+        """
+        # Llamada a la API de usuarios.
+        Si falla o no encuentra al usuario, LANZA UNA EXCEPCIÓN.
+        """
+        if not usuario:
+            # Si el ID viene vacío, salta una excepción y no hace la llamada
+            raise Exception("Error: falta ID de usuario.")
 
-    #     try: 
-    #         # Llama al otro microservicio
-    #         response = requests.get(USER_SERVICE_URL)
-    #         response.raise_for_status() # Lanza error si la petición falla
+        # URL de destino en el microservicio de usuarios
+        # Permite obtener la información de un usuario específico por su ID
+        url_destino = f"{settings.USER_MICROSERVICE_URL}{usuario}"
+        
+        try:
+            # Hacemos la petición con timeout
+            response = requests.get(url_destino, timeout=5)
             
-    #         # Convierte la respuesta JSON en DTOs
-    #         users_data = response.json()
-    #         return [MiembroDTO(u['id'], u['nombreUsuario'], u['esArtista'], u['rutaFoto']) for u in users_data]
-
-    #     except requests.RequestException as e:
-        
-    #         # Manejar el error (ej. servicio caído)
-    #         print(f"Error al contactar servicio de usuarios: {e}")
+            if response.status_code == 200:
+                data = response.json()
                 
-    #         return MiembroDTO(
-    #             id=usuario_id,
-    #             nombreUsuario="Usuario no encontrado",
-    #             esArtista=False,
-    #             rutaFoto=None
-    #         )
-    
+                # Mapeamos el JSON recibido al MiembroDTO
+                # (Ajusta las claves 'id', 'nombreUsuario', etc. a lo que tu API de usuarios devuelva realmente)
+                return MiembroDTO(
+                    idUsuario=str(data.get('id')), # Tu DTO usa 'idUsuario'
+                    nombreUsuario=data.get('nombreUsuario'),
+                    esArtista=data.get('esartista'),
+                    rutaFoto=data.get('rutaFoto', None)
+                )
+            else:
+                # Si devuelve 404 o 500, lanzamos excepción.
+                raise Exception(f"Error al obtener usuario {usuario}: El servicio respondió {response.status_code}")
+                
+        except requests.RequestException as e:
+            # Si el servidor está caído o hay error de red
+            raise Exception(f"Error de conexión con el microservicio de usuarios: {str(e)}")
+        
+            
     @staticmethod
     def _to_dto(modelo: ComunidadMiembros) -> MiembroDTO:
         """
@@ -51,23 +63,23 @@ class MiembroDAO:
             idUsuarioStr = ""
         
         # Busca al usuario en el servicio de usuarios
-        return MiembroDAO._get_fake_miembro(idUsuarioStr) # TODO -> Reemplazar por llamada real al servicio
+        return MiembroDAO.get_miembros(idUsuarioStr)
 
     
-    @staticmethod
-    def _get_fake_miembro(usuario: str) -> MiembroDTO:
-        """
-        SIMULACIÓN del servicio de usuarios.
-        TODO -> Reemplazar por llamada real al servicio
-        """
+    # @staticmethod
+    # def _get_fake_miembro(usuario: str) -> MiembroDTO:
+    #     """
+    #     SIMULACIÓN del servicio de usuarios.
+    #     TODO -> Reemplazar por llamada real al servicio
+    #     """
         
-        # como es solo una prueba, se crea en el momento un miembro con el id establecido 
-        return MiembroDTO(
-            usuario,
-            f"UsuarioPrueba{usuario}",
-            False,
-            None
-        )
+    #     # como es solo una prueba, se crea en el momento un miembro con el id establecido 
+    #     return MiembroDTO(
+    #         usuario,
+    #         f"UsuarioPrueba{usuario}",
+    #         False,
+    #         None
+    #     )
 
     @staticmethod
     def get_miembros_comunidad(comunidad: str) -> List[MiembroDTO]:
@@ -108,9 +120,7 @@ class MiembroDAO:
             idComunidad_id=comunidad,  # se añade _id para asignar directamente el id de la comunidad
             idUsuario=usuario
         )
-        #return nuevo_miembro # Devolvemos el modelo simple
-        #return MiembroDAO._get_fake_miembro(usuario) # TODO TEMPORAL CAMBIAR
-        return MiembroDAO._to_dto(nuevo_miembro) # devolver DTO real (o fake según implementación)
+        return MiembroDAO._to_dto(nuevo_miembro) # devolver el DTO del nuevo miembro añadido
 
         
     @staticmethod

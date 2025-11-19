@@ -8,7 +8,10 @@ import traceback
 class PersonasVetadasController(APIView):
 
     def get(self, request, idComunidad=None):
-        """ GET /comunidad/vetados/{idComunidad} """
+        """ 
+        GET /comunidad/vetados/{idComunidad} 
+        Obtiene una lista con todos los miembros vetados en una comunidad específica.
+        """
         if not idComunidad:
              return Response({"error": "Falta idComunidad"}, status=status.HTTP_400_BAD_REQUEST)
         try:
@@ -19,10 +22,13 @@ class PersonasVetadasController(APIView):
             return Response({"error": str(e)}, status=status.HTTP_404_NOT_FOUND)
 
     def post(self, request, idComunidad=None):
-        """ POST /comunidad/vetados/{idComunidad} """
+        """ 
+        POST /comunidad/vetados/{idComunidad} 
+        Veta a un miembro en la comunidad especificada en la URL.
+        """
         if not idComunidad:
              return Response({"error": "Falta idComunidad"}, status=status.HTTP_400_BAD_REQUEST)
-        
+         
         idMiembro = request.data.get('idMiembro')
         if not idMiembro:
              return Response({"error": "Falta 'idMiembro' en el body"}, status=status.HTTP_400_BAD_REQUEST)
@@ -34,7 +40,10 @@ class PersonasVetadasController(APIView):
             return Response({"error": str(e)}, status=status.HTTP_409_CONFLICT)
 
     def delete(self, request, idComunidad=None, idMiembro=None):
-        """ DELETE /comunidad/vetados/{idComunidad}/{idMiembro} """
+        """ 
+        DELETE /comunidad/vetados/{idComunidad}/{idMiembro} 
+        Quita el veto a un miembro en la comunidad especificada en la URL.
+        """
         if not idComunidad or not idMiembro:
              return Response({"error": "Faltan IDs en la URL"}, status=status.HTTP_400_BAD_REQUEST)
 
