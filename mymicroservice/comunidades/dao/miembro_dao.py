@@ -49,36 +49,14 @@ class MiembroDAO:
     def _to_dto(modelo: ComunidadMiembros) -> MiembroDTO:
         """
         Convierte un modelo ComunidadMiembros a MiembroDTO.
-        - Extrae el id de usuario desde el modelo (soporta distintos nombres de campo).
-        - Llama al servicio de usuarios (aquí simulado) para obtener el DTO del usuario.
+        - Extrae el id de usuario desde el modelo.
+        - Llama al servicio de usuarios para obtener el DTO del usuario.
         """
         # Obtener el id del usuario desde las posibles propiedades del modelo
         idUsuario = getattr(modelo, "idUsuario", None)
-
-        # Normalizamos a string y llamamos al "servicio" de usuarios (simulado)
-        if idUsuario is not None:
-            idUsuarioStr = str(idUsuario)
-        else:
-            idUsuarioStr = ""
         
         # Busca al usuario en el servicio de usuarios
-        return MiembroDAO.get_miembros(idUsuarioStr)
-
-    
-    # @staticmethod
-    # def _get_fake_miembro(usuario: str) -> MiembroDTO:
-    #     """
-    #     SIMULACIÓN del servicio de usuarios.
-    #     TODO -> Reemplazar por llamada real al servicio
-    #     """
-        
-    #     # como es solo una prueba, se crea en el momento un miembro con el id establecido 
-    #     return MiembroDTO(
-    #         usuario,
-    #         f"UsuarioPrueba{usuario}",
-    #         False,
-    #         None
-    #     )
+        return MiembroDAO.get_miembros(idUsuario)
 
     @staticmethod
     def get_miembros_comunidad(comunidad: str) -> List[MiembroDTO]:
