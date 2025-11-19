@@ -30,12 +30,11 @@ class MiembroDAO:
                 data = response.json()
                 
                 # Mapeamos el JSON recibido al MiembroDTO
-                # (Ajusta las claves 'id', 'nombreUsuario', etc. a lo que tu API de usuarios devuelva realmente)
                 return MiembroDTO(
-                    idUsuario=str(data.get('id')), # Tu DTO usa 'idUsuario'
-                    nombreUsuario=data.get('nombreUsuario'),
+                    idUsuario=data.get('id'),
+                    nombreUsuario=data.get('nombreusuario'),
                     esArtista=data.get('esartista'),
-                    rutaFoto=data.get('rutaFoto', None)
+                    rutaFoto=data.get('rutafoto', None)
                 )
             else:
                 # Si devuelve 404 o 500, lanzamos excepción.

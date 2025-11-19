@@ -6,7 +6,7 @@ class Comunidad(models.Model):
     # Id de la comunidad - lo genera automaticamente django para cada comunidad que se vaya creando
     idComunidad = models.AutoField(primary_key=True) 
     # Id del artista que crea la comunidad
-    idArtista = models.CharField(max_length=255) # TODO añadir unique=True 
+    idArtista = models.IntegerField() # TODO añadir unique=True 
     # Nombre de la comunidad
     nombreComunidad = models.CharField(max_length=100, unique=True)
     # Descripción de la comunidad
@@ -18,7 +18,7 @@ class Comunidad(models.Model):
     # Lista de palabras vetadas en la comunidad (lista separada por comas)
     palabrasVetadas = models.TextField(blank=True, null=True)
     
-    # Creación de restricción
+    # Creación de restricción TODO
     # class Meta:
     #     # Un usuario no puede estar más de una vez en la misma comunidad
     #     # CADA IDARTISTAS SOLO PUEDE CREAR UNA VEZ POR CADA ID_COMUNIDAD
@@ -32,7 +32,7 @@ class ComunidadMiembros(models.Model):
     # Id de la comunidad
     idComunidad = models.ForeignKey(Comunidad, on_delete=models.CASCADE)
     # Id del usuario miembro de la comunidad
-    idUsuario = models.CharField(max_length=255)
+    idUsuario = models.IntegerField()
     # Fecha de unión del usuario a la comunidad
     fechaUnion = models.DateTimeField(auto_now_add=True)
 
@@ -74,7 +74,7 @@ class PublicacionMeGusta(models.Model):
     # Id de la publicación
     idPublicacion = models.ForeignKey(Publicacion, on_delete=models.CASCADE)
     # Id del usuario que dio me gusta
-    idUsuario = models.CharField(max_length=255)
+    idUsuario = models.IntegerField()
     # Fecha en la que se dio el me gusta
     fechaMeGusta = models.DateTimeField(auto_now_add=True)
 
@@ -92,7 +92,7 @@ class PersonasVetadas(models.Model):
     # Id de la comunidad en la que se realiza el veto
     idComunidad = models.ForeignKey(Comunidad, on_delete=models.CASCADE)
     # Id del miembro vetado
-    idMiembro = models.CharField(max_length=255)
+    idMiembro = models.IntegerField()
     # Fecha del veto
     fechaVeto = models.DateTimeField(auto_now_add=True)
 
