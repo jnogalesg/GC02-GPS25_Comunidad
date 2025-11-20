@@ -43,7 +43,7 @@ class ComunidadMiembros(models.Model):
         unique_together = ('idComunidad', 'idUsuario')
 
     def __str__(self):
-        return f"{self.idUsuario} en {self.idComunidad.nombreComunidad}"
+        return f"Usuario {self.idUsuario} en {self.idComunidad.nombreComunidad}"
 
 
 class Publicacion(models.Model):
@@ -85,22 +85,22 @@ class PublicacionMeGusta(models.Model):
         unique_together = ('idPublicacion', 'idUsuario')
 
     def __str__(self):
-        return f"❤️ {self.idUsuario} → {self.idPublicacion.titulo}"
+        return f"Me gusta ❤️: Usuario {self.idUsuario} → {self.idPublicacion.titulo}"
 
 
 class PersonasVetadas(models.Model):
     # Id de la comunidad en la que se realiza el veto
     idComunidad = models.ForeignKey(Comunidad, on_delete=models.CASCADE)
     # Id del miembro vetado
-    idMiembro = models.IntegerField()
+    idUsuario = models.IntegerField()
     # Fecha del veto
     fechaVeto = models.DateTimeField(auto_now_add=True)
 
     # Creación de restricción
     class Meta:
         # Un miembro no puede ser vetado más de una vez en la misma comunidad
-        # CADA IDMIEMBRO SOLO PUEDE APARECER UNA VEZ POR CADA IDCOMUNIDAD
-        unique_together = ('idComunidad', 'idMiembro')
+        # CADA IDUSUARIO SOLO PUEDE APARECER UNA VEZ POR CADA IDCOMUNIDAD
+        unique_together = ('idComunidad', 'idUsuario')
 
     def __str__(self):
-        return f"{self.idMiembro} vetado en {self.idComunidad.nombreComunidad}"
+        return f"Usuario {self.idUsuario} vetado en {self.idComunidad.nombreComunidad}"

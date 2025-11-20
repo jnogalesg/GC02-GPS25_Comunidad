@@ -9,31 +9,30 @@ from comunidades.controller.personasVetadas_controller import PersonasVetadasCon
 urlpatterns = [
 
     # --- Comunidades ---
-    # GET (lista de todas), POST (crear)
+    # GET (listar), POST (crear)
     path('', ComunidadController.as_view()), 
     # GET (específica), DELETE (borrar), PUT (actualizar)
-    path('<str:idComunidad>/', ComunidadController.as_view()),
+    path('<int:idComunidad>/', ComunidadController.as_view()),
 
     # --- Miembros --- 
-    # GET (lista), POST (añadir)
-    path('miembros/<str:idComunidad>/', MiembroController.as_view()),
+    # GET (listar), POST (añadir)
+    path('miembros/<int:idComunidad>/', MiembroController.as_view()),
     # GET (específico), DELETE (borrar)
-    path('miembros/<str:idComunidad>/<str:idMiembro>/', MiembroController.as_view()),
+    path('miembros/<int:idComunidad>/<int:idMiembro>/', MiembroController.as_view()),
     
     # --- Me Gusta en Publicaciones ---
     # POST, GET y DELETE (específicos) 
-    path('publicaciones/megusta/<str:idPublicacion>/', PublicacionMeGustaController.as_view()),
+    path('publicaciones/megusta/<int:idPublicacion>/', PublicacionMeGustaController.as_view()),
     
     # --- Publicaciones ---
-    # GET (lista), POST (crear)
-    path('publicaciones/<str:idComunidad>/', PublicacionController.as_view()),
+    # GET (listar), POST (crear)
+    path('publicaciones/<int:idComunidad>/', PublicacionController.as_view()),
     # GET (específica), DELETE (borrar)
-    path('publicaciones/<str:idComunidad>/<str:idPublicacion>/', PublicacionController.as_view()),
+    path('publicaciones/<int:idComunidad>/<int:idPublicacion>/', PublicacionController.as_view()),
     
     # --- Personas Vetadas ---
-    # GET (lista), POST (vetar)
-    path('vetados/<str:idComunidad>/', PersonasVetadasController.as_view()),
-    
+    # GET (listar), POST (vetar)
+    path('vetados/<int:idComunidad>/', PersonasVetadasController.as_view()),
     # DELETE (quitar veto)
-    path('vetados/<str:idComunidad>/<str:idMiembro>/', PersonasVetadasController.as_view()),
+    path('vetados/<int:idComunidad>/<int:idUsuario>/', PersonasVetadasController.as_view()),
 ]

@@ -3,7 +3,7 @@ from .genero_dto import GeneroDTO
 
 @dataclass
 class ArtistaDTO:
-    idArtista: str
+    idArtista: int
     nombreUsuario: str
     rutaFoto: str | None  # puede ser nulo
     esNovedad: bool

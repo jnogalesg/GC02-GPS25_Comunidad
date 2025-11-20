@@ -17,12 +17,12 @@ Este proyecto contiene la API REST para la gestión de comunidades de la platafo
 
 Sigue estos pasos para clonar, instalar y ejecutar el servidor en tu máquina local.
 
-### 1. Prerrequisitos
+### 🔙 1. Prerrequisitos
 
 * [Python](https://www.python.org/downloads/) 3.10+
 * [Git](https://git-scm.com/install/)
 
-### 2. Instalación
+### 🛠️ 2. Instalación
 
 1.  Clona el repositorio (si no lo has hecho):
     ```bash
@@ -51,7 +51,7 @@ Sigue estos pasos para clonar, instalar y ejecutar el servidor en tu máquina lo
     ```
     *`requirements.txt` incluye la instalación de Django, Django REST Framework, request y otras dependecias necesarias*
 
-### 3. Configuración de la Base de Datos
+### 🧑🏻‍💻 3. Configuración de la Base de Datos
 
 Este proyecto utiliza **SQLite** por defecto, por lo que no requiere un servidor de base de datos externo.
 
@@ -64,7 +64,7 @@ Este proyecto utiliza **SQLite** por defecto, por lo que no requiere un servidor
     python mymicroservice/manage.py migrate
     ```
 
-### 4. Ejecutar el Servidor
+### 🚀 4. Ejecutar el Servidor
 
 Una vez instalado y con la base de datos migrada, puedes iniciar el servidor de desarrollo:
 
@@ -73,3 +73,42 @@ python mymicroservice/manage.py runserver
 ```
 
 El servidor estará corriendo y escuchando en http://127.0.0.1:8000/
+
+##### 🔍 Inspección y modificación directa de la base de datos:
+
+Puede realizarse desde el panel de superusuario de Django, a través de la dirección: http://127.0.0.1:8000/admin
+
+```
+usuario: admin
+contraseña: admin
+```
+
+## 📁 Arquitectura del microservicio
+```
+mymicroservice/
+├── mymicroservice/       # ⚙️ Configuración global del proyecto Django
+│   ├── settings.py       # Variables de entorno, apps instaladas, BD
+│   ├── urls.py           # Enrutador principal
+│   └── wsgi.py           # Punto de entrada para servidores web
+│
+├── comunidades/          # 📦 App principal (Lógica del dominio Comunidad)
+│   ├── controller/       # 🤵 Controladores (APIViews - Gestionan peticiones HTTP)
+│   │   ├── comunidad_controller.py
+│   │   ├── miembro_controller.py
+│   │   └── ...
+│   ├── dao/              # 👨‍🍳 Data Access Objects (Acceso a BD y APIs externas)
+│   │   ├── comunidad_dao.py
+│   │   ├── miembro_dao.py
+│   │   └── ...
+│   ├── dto/              # 🍛 Data Transfer Objects (Estructuras de datos puras)
+│   │   ├── comunidad_dto.py
+│   │   ├── artista_dto.py
+│   │   └── ...
+│   ├── migrations/       # 🗃️ Historial de cambios en la base de datos
+│   ├── models.py         # 🧱 Definición de tablas (La "Despensa")
+│   ├── urls.py           # 🔗 Rutas específicas de la API de comunidades
+│   └── admin.py          # 🛠️ Panel de administración
+│
+├── manage.py             # 🚀 Script de ejecución y gestión del servidor
+└── requirements.txt      # 📦 Dependencias del proyecto
+```

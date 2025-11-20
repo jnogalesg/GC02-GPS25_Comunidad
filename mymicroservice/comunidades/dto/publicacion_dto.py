@@ -3,8 +3,8 @@ from datetime import datetime
 
 @dataclass
 class PublicacionDTO:
-    idPublicacion: str
-    idComunidad: str
+    idPublicacion: int
+    idComunidad: int
     titulo: str
     contenido: str
     rutaFichero: str | None  # puede ser nulo

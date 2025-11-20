@@ -3,6 +3,6 @@ from datetime import datetime
 
 @dataclass
 class PersonaVetadaDTO:
-    idMiembro: str
-    idComunidad: str
+    idUsuario: int
+    idComunidad: int
     fechaVeto: datetime

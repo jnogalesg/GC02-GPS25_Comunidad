@@ -1,6 +1,7 @@
 from typing import List
-from comunidades.models import PersonasVetadas, Comunidad
+from comunidades.models import PersonasVetadas
 from comunidades.dto.personasVetadas_dto import PersonaVetadaDTO
+from comunidades.dao.miembro_dao import MiembroDAO
 
 class PersonasVetadasDAO:
 
@@ -10,13 +11,13 @@ class PersonasVetadasDAO:
         Convierte un modelo de PersonasVetadas a un DTO.
         '''
         return PersonaVetadaDTO(
-            idMiembro=modelo.idMiembro,
-            idComunidad=str(modelo.idComunidad_id), # Usamos _id para el string
+            idUsuario=modelo.idUsuario,
+            idComunidad=modelo.idComunidad_id, # Usamos _id para coger el ID directamente
             fechaVeto=modelo.fechaVeto
         )
 
     @staticmethod
-    def get_vetados(comunidad: str) -> List[PersonaVetadaDTO]:
+    def get_vetados(comunidad: int) -> List[PersonaVetadaDTO]:
         ''' 
         Devuelve la lista de personas vetadas en una comunidad específica.
         '''
@@ -28,24 +29,39 @@ class PersonasVetadasDAO:
         return [PersonasVetadasDAO._to_dto(v) for v in vetados]
 
     @staticmethod
-    def vetar_miembro(comunidad: str, miembro: str) -> PersonaVetadaDTO:
+    def vetar_miembro(comunidad: int, usuario: int) -> PersonaVetadaDTO:
         '''
         Crea un nuevo veto para un miembro en una comunidad.
         '''
         # Verificamos si ya está vetado para evitar error 500 por duplicado
-        if PersonasVetadas.objects.filter(idComunidad_id=comunidad, idUsuario=miembro).exists():
-             raise Exception(f"El usuario {miembro} ya está vetado en esta comunidad.")
+        if PersonasVetadas.objects.filter(idComunidad_id=comunidad, idUsuario=usuario).exists():
+             raise Exception(f"El usuario {usuario} ya está vetado en esta comunidad.")
              
+        # Si no existe, creamos el veto
         nuevo_veto = PersonasVetadas.objects.create(
             idComunidad_id=comunidad,
-            idUsuario=miembro
+            idUsuario=usuario
         )
+        
+        # 3. Echar al miembro (Kick)
+        try:
+            # Eliminamos al miembro de la comunidad (si está en ella)
+            MiembroDAO.eliminar_miembro(comunidad, usuario)
+            print(f"INFO: Usuario {usuario} expulsado de la comunidad al ser vetado.")
+        except Exception:
+            # Si el usuario no era miembro, no pasa nada
+            pass
+        
+        # Se devuelve el DTO del nuevo veto
         return PersonasVetadasDAO._to_dto(nuevo_veto)
 
     @staticmethod
-    def quitar_veto(comunidad: str, miembro: str):
+    def quitar_veto(comunidad: int, usuario: int):
         try:
-            veto = PersonasVetadas.objects.get(idComunidad_id=comunidad, idUsuario=miembro)
+            # Intentamos obtener el veto especificado para eliminarlo
+            veto = PersonasVetadas.objects.get(idComunidad_id=comunidad, idUsuario=usuario)
             veto.delete()
+            
+            # Si no se encuetra el veto, se lanza una excepción
         except PersonasVetadas.DoesNotExist:
-            raise Exception(f"El usuario {miembro} no está vetado en la comunidad {comunidad}.")
+            raise Exception(f"El usuario {usuario} no está vetado en la comunidad {comunidad}.")

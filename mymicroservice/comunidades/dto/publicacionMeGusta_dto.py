@@ -3,6 +3,6 @@ from datetime import datetime
 
 @dataclass
 class PublicacionMeGustaDTO:
-    idPublicacion: str
-    idUsuario: str
+    idPublicacion: int
+    idUsuario: int
     fechaMeGusta: datetime
