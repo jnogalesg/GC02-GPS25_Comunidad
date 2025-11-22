@@ -51,20 +51,35 @@ Sigue estos pasos para clonar, instalar y ejecutar el servidor en tu máquina lo
     ```
     *`requirements.txt` incluye la instalación de Django, Django REST Framework, request y otras dependecias necesarias*
 
-### 🧑🏻‍💻 3. Configuración de la Base de Datos
+## ⚙️ 3. Configuración del Entorno
+
+Para garantizar el correcto funcionamiento del microservicio y su integración con el resto del ecosistema UnderSounds, es **obligatorio** revisar la configuración de las siguientes variables de entorno.
+
+Estas variables permiten adaptar la conexión con otros servicios (como la API de Usuarios) sin necesidad de modificar el código fuente, facilitando el despliegue en diferentes entornos (local, producción, docker).
+
+| Variable | Descripción | Valor por Defecto (Desarrollo) |
+| :--- | :--- | :--- |
+| `USER_MICROSERVICE_URL` | **Crítica.** URL base de la API de Usuarios. Este servicio la utiliza para validar y obtener datos de Artistas y Miembros. Si este servicio cambia de dirección, **debes** actualizar esta variable. | `http://127.0.0.1:3000/api/usuarios/` |
+| `DEBUG` | Define si Django se ejecuta en modo depuración (muestra errores detallados). **Debe establecerse a `False` en entornos de producción.** | `True` |
+
+> **Importante:** El sistema intentará conectarse a `http://127.0.0.1:3000/api/usuarios/` por defecto. Si el servicio de usuarios está en otro puerto o dominio, el sistema **fallará** al intentar crear comunidades o añadir miembros si no se configura `USER_MICROSERVICE_URL` correctamente.
+
+### 🧑🏻‍💻 4. Configuración de la Base de Datos
 
 Este proyecto utiliza **SQLite** por defecto, por lo que no requiere un servidor de base de datos externo.
 
 1.  Aplica las migraciones para crear las tablas en el archivo `db.sqlite3`:
-    ```bash
-    # Crea las migraciones a partir de los modelos (solo si has modificado modelos o no hay migraciones)
-    python mymicroservice/manage.py makemigrations
+```bash
+python mymicroservice/manage.py makemigrations
+python mymicroservice/manage.py migrate
+```
+2.  **Crea un superusuario** para acceder al panel de administración:
+```bash
+python mymicroservice/manage.py createsuperuser
+```
+*Sigue las instrucciones en pantalla. Puedes usar `admin` como nombre y contraseña para desarrollo local.*
 
-    # Aplica las migraciones a la base de datos
-    python mymicroservice/manage.py migrate
-    ```
-
-### 🚀 4. Ejecutar el Servidor
+### 🚀 5. Ejecutar el Servidor
 
 Una vez instalado y con la base de datos migrada, puedes iniciar el servidor de desarrollo:
 
@@ -78,10 +93,7 @@ El servidor estará corriendo y escuchando en http://127.0.0.1:8000/
 
 Puede realizarse desde el panel de superusuario de Django, a través de la dirección: http://127.0.0.1:8000/admin
 
-```
-usuario: admin
-contraseña: admin
-```
+*(Usa el usuario y contraseña que creaste en el paso 3)*
 
 ## 📁 Arquitectura del microservicio
 ```
@@ -105,7 +117,7 @@ mymicroservice/
 │   │   ├── artista_dto.py
 │   │   └── ...
 │   ├── migrations/       # 🗃️ Historial de cambios en la base de datos
-│   ├── models.py         # 🧱 Definición de tablas (La "Despensa")
+│   ├── models.py         # 🧱 Definición de tablas 
 │   ├── urls.py           # 🔗 Rutas específicas de la API de comunidades
 │   └── admin.py          # 🛠️ Panel de administración
 │
