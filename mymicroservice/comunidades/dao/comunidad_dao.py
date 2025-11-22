@@ -50,8 +50,7 @@ class ComunidadDAO:
         Traductor que convierte el Modelo -> DTO
         """
         # 1. SIMULAMOS la llamada al servicio de usuarios
-        # artista_dto = ComunidadDAO._get_fake_artista(modelo.idArtista) # TODO -> Reemplazar por llamada real al servicio
-        artista_dto = ComunidadDAO.get_artista(modelo.idArtista) # Llamada real al servicio de Usuarios para obtener el artista
+        artista_dto = ComunidadDAO.get_artista(modelo.idArtista) # Llamada al servicio de Usuarios para obtener el artista
         
         # 2. Calcular los contadores 
         num_publi = modelo.publicacion_set.count() # Contar publicaciones
