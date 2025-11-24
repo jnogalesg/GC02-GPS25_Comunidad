@@ -143,8 +143,9 @@ class ComunidadDAO:
         Borra una comunidad por su ID.
         """
         try:
+            # Se obteniene el modelo de la comunidad especificada y se elimina de la base de datos
             comunidad = Comunidad.objects.get(idComunidad=comunidad)
             comunidad.delete()
             # No se devuelve nada, el Controller dará un 204
-        except Comunidad.DoesNotExist:
-            raise Exception(f"Comunidad con id {id} no encontrada.")
+        except Comunidad.DoesNotExist: # Si no existe la comunidad, habrá una excepción
+            raise Exception(f"Comunidad con id {comunidad} no encontrada.")

@@ -1,5 +1,4 @@
-from django.urls import path, include
-from rest_framework.routers import DefaultRouter
+from django.urls import path
 from comunidades.controller.comunidad_controller import ComunidadController 
 from comunidades.controller.miembro_controller import MiembroController
 from comunidades.controller.publicacion_controller import PublicacionController

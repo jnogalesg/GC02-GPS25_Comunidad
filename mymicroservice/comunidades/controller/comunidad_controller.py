@@ -71,7 +71,7 @@ class ComunidadController(APIView):
             traceback.print_exc()
             return Response({"error": str(e)}, status=status.HTTP_404_NOT_FOUND)
 
-    def delete(self, request, idComunidad=None):
+    def delete(self, request,idComunidad=None):
         """
         Realiza DELETE comunidad/{idComunidad} (Borrar una comunidad existente)
         """
