@@ -84,15 +84,14 @@ python mymicroservice/manage.py createsuperuser
 Una vez instalado y con la base de datos migrada, puedes iniciar el servidor de desarrollo:
 
 ```bash
-python mymicroservice/manage.py runserver
+python mymicroservice/manage.py runserver 0.0.0.0:8084
 ```
 
-El servidor estará corriendo y escuchando en http://127.0.0.1:8000/
+El servidor estará corriendo y escuchando en http://127.0.0.1:8084/
 
 ##### 🔍 Inspección y modificación directa de la base de datos:
 
-Puede realizarse desde el panel de superusuario de Django, a través de la dirección: http://127.0.0.1:8000/admin
-
+Puede realizarse desde el panel de superusuario de Django, a través de la dirección: http://127.0.0.1:8084/admin
 *(Usa el usuario y contraseña que creaste en el paso 3)*
 
 ## 📁 Arquitectura del microservicio

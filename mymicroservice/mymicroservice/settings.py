@@ -26,8 +26,8 @@ SECRET_KEY = 'django-insecure-8p2#qhd&14@$bkrso-c1hcwr%ji1n-9%0-pr&l@gycei+7c!xz
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
+# Permitir todas las conexiones de host para desarrollo
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
@@ -44,6 +44,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -130,3 +131,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # URL Base del Microservicio de Usuarios
 # Si existe la variable de entorno la usa, si no, usa la de por defecto (localhost)
 USER_MICROSERVICE_URL = os.getenv('USER_MICROSERVICE_URL', 'http://127.0.0.1:3000/api/usuarios/')
+
+## Configuración CORS - Permite conexiones desde cualquier origen (para conectar con el frontend)
+CORS_ALLOW_ALL_ORIGINS = True
