@@ -11,7 +11,7 @@ USER_SERVICE_URL = settings.USER_MICROSERVICE_URL
 class ComunidadDAO:
        
     @staticmethod 
-    def get_artista(artista: str) -> ArtistaDTO:
+    def get_artista(artista: int) -> ArtistaDTO:
         """
         # Esta función realiza la llamada al microservicio de usuarios para obtener al artista con el id especificado.
         Si falla o no encuentra al artista, LANZA UNA EXCEPCIÓN.
@@ -29,7 +29,7 @@ class ComunidadDAO:
                 
                 # Mapeamos el JSON recibido al ArtistaDTO
                 return ArtistaDTO(
-                    idArtista=str(data.get('id')),
+                    idArtista=data.get('id'),
                     nombreUsuario=data.get('nombreusuario'),
                     rutaFoto=data.get('rutafoto'),
                     esNovedad=data.get('esnovedad'),
@@ -61,7 +61,7 @@ class ComunidadDAO:
         
         # 4. Construimos el DTO final
         return ComunidadDTO(
-            idComunidad=str(modelo.idComunidad),
+            idComunidad=modelo.idComunidad,
             artista=artista_dto,
             nombreComunidad=modelo.nombreComunidad,
             descComunidad=modelo.descComunidad,
@@ -98,7 +98,7 @@ class ComunidadDAO:
         return ComunidadDAO._to_dto(nueva_comunidad)
 
     @staticmethod
-    def get_comunidad_especifica(comunidad: str) -> ComunidadDTO:
+    def get_comunidad_especifica(comunidad: int) -> ComunidadDTO:
         """
         Busca UNA comunidad específica por su ID.
         """
@@ -112,7 +112,7 @@ class ComunidadDAO:
             raise Exception(f"Comunidad con id {comunidad} no encontrada.")
 
     @staticmethod
-    def actualizar_comunidad(comunidad: str, datos: dict) -> ComunidadDTO:
+    def actualizar_comunidad(comunidad: int, datos: dict) -> ComunidadDTO:
         """
         Actualiza una comunidad específica.
         """
@@ -138,7 +138,7 @@ class ComunidadDAO:
             raise Exception(f"Comunidad con id {comunidad} no encontrada.")
 
     @staticmethod
-    def eliminar_comunidad(comunidad: str):
+    def eliminar_comunidad(comunidad: int):
         """
         Borra una comunidad por su ID.
         """
