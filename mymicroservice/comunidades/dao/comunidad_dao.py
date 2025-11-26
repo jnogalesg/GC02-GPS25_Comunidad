@@ -90,6 +90,9 @@ class ComunidadDAO:
         'palabrasVetadas': ','.join(datos.get('palabrasVetadas', [])) 
         }
         
+        if Comunidad.objects.filter(idArtista=datos.get('idArtista')).exists():
+            raise Exception("Este artista ya tiene una comunidad creada.")
+        
         # Crea el modelo en la BD
         # **datos es un truco para "desempaquetar" un diccionario
         nueva_comunidad = Comunidad.objects.create(**datosModelo)
