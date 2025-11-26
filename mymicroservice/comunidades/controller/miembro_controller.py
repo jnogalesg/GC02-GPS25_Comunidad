@@ -44,7 +44,7 @@ class MiembroController(APIView):
             return Response(dataclasses.asdict(nuevo_miembro_dto), status=status.HTTP_201_CREATED)
         except Exception as e:
             # Captura error si ya existe (restricción unique_together, id único para cada miembro en la comunidad)
-            return Response({"error": f"El usuario ya es miembro o error: {e}"}, status=status.HTTP_409_CONFLICT)
+            return Response({"error": f"Error: {e}"}, status=status.HTTP_409_CONFLICT)
 
     def delete(self, request, idComunidad=None, idMiembro=None):
         """

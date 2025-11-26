@@ -1,5 +1,5 @@
 from django.conf import settings
-from comunidades.models import ComunidadMiembros, PersonasVetadas
+from comunidades.models import ComunidadMiembros, PersonasVetadas, Comunidad
 from comunidades.dto.miembro_dto import MiembroDTO
 from typing import List
 from pyexpat import model
@@ -92,6 +92,10 @@ class MiembroDAO:
         # si ya existe el miembro en la comunidad, lanza una excepción
         if ComunidadMiembros.objects.filter(idComunidad=comunidad, idUsuario=usuario).exists():
             raise Exception("El usuario ya es miembro de la comunidad.")
+        
+        # si el usuario es el creador de la comunidad, lanza una excepción
+        if Comunidad.objects.filter(idComunidad=comunidad, idArtista=usuario).exists():
+            raise Exception("El usuario es el creador de la comunidad.")
         
         # si el miembro está vetado de la comunidad, lanza una excepción
         if PersonasVetadas.objects.filter(idComunidad=comunidad, idUsuario=usuario).exists():
