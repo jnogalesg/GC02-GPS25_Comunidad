@@ -4,6 +4,7 @@ from rest_framework import status
 from comunidades.dao.comunidad_dao import ComunidadDAO
 import dataclasses 
 import traceback # Para ver errores completos
+from rest_framework.permissions import IsAuthenticated # para proteger rutas con autenticación por token
 
 class ComunidadController(APIView):
     
@@ -84,3 +85,26 @@ class ComunidadController(APIView):
         except Exception as e:
             traceback.print_exc()
             return Response({"error": str(e)}, status=status.HTTP_404_NOT_FOUND)
+        
+# --- Nuevo controlador para devolver todas las comunidades a las que pertenece un usuario---
+class ComunidadesUsuarioController(APIView):
+
+    def get(self, request, idUsuario=None):
+        """
+        Realiza GET comunidad/usuario/{idUsuario} (Obtener comunidades de un usuario específico)
+        """
+        # GET /comunidad/usuario/{idUsuario}/
+        if idUsuario is None:
+             return Response({"error": "Se requiere el ID del usuario"}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            # Llamamos al DAO con el ID que viene en la URL
+            comunidades_dto = ComunidadDAO.get_comunidades_usuario(idUsuario)
+            
+            data = [dataclasses.asdict(c) for c in comunidades_dto]
+            # Devolvemos la lista (vacía o con datos) y status 200 OK
+            return Response(data, status=status.HTTP_200_OK)
+            
+        except Exception as e:
+            traceback.print_exc()
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
