@@ -34,19 +34,15 @@ class PalabrasVetadasDAO:
         if not idComunidad:
             raise Exception("Falta id de la Comunidad")
         
-        try:
-            # Obtiene la comunidad con el id especificado
-            comunidad = Comunidad.objects.get(pk=idComunidad)
-            
-            # Usa la función auxiliar para convertir el string a lista
-            lista_palabras = PalabrasVetadasDAO._string_to_list(comunidad.palabrasVetadas)
-            
-            # Devuelve el DTO con la lista de palabras
-            return PalabrasVetadasDTO(palabras=lista_palabras)
-        except Comunidad.DoesNotExist: # Si no existe la comunidad, habrá una excepción
-            raise Exception("Comunidad no encontrada")
+        # Obtiene la comunidad con el id especificado
+        comunidad = Comunidad.objects.get(pk=idComunidad)
+        
+        # Usa la función auxiliar para convertir el string a lista
+        lista_palabras = PalabrasVetadasDAO._string_to_list(comunidad.palabrasVetadas)
+        
+        # Devuelve el DTO con la lista de palabras
+        return PalabrasVetadasDTO(palabras=lista_palabras)
 
-    # 2. AÑADIR (POST - Append)
     @staticmethod
     def add_palabras_vetadas(idComunidad: int, nuevas_palabras: List[str]) -> PalabrasVetadasDTO:
         """

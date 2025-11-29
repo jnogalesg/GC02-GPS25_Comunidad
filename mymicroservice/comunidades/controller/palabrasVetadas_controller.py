@@ -4,6 +4,8 @@ from rest_framework import status
 from comunidades.dao.palabrasVetadas_dao import PalabrasVetadasDAO
 import dataclasses
 
+from mymicroservice.comunidades.models import Comunidad
+
 class PalabrasVetadasController(APIView):
 
     def get(self, request, idComunidad):
@@ -11,7 +13,14 @@ class PalabrasVetadasController(APIView):
         GET /comunidad/<idComunidad>/palabras-vetadas/
         Obtiene la lista de palabras vetadas para una comunidad específica.
         """
-        # 1. Consultar palabras
+        if not idComunidad: # Comprobamos que se ha pasado idComunidad en la URL
+             return Response({"error": "Falta idComunidad en la URL"}, status=status.HTTP_400_BAD_REQUEST)
+         
+        try:    # Verificamos que la comunidad existe, si no, salta una excepción
+            Comunidad.objects.get(idComunidad=idComunidad)
+        except Comunidad.DoesNotExist:
+            return Response({"error": f"Comunidad con id {idComunidad} no encontrada."}, status=status.HTTP_404_NOT_FOUND)
+
         try:
             dto = PalabrasVetadasDAO.get_palabras_vetadas(idComunidad)
             return Response(dataclasses.asdict(dto), status=status.HTTP_200_OK)
@@ -23,6 +32,14 @@ class PalabrasVetadasController(APIView):
         POST /comunidad/<idComunidad>/palabras-vetadas/
         Añade nuevas palabras vetadas a la comunidad.
         """
+        if not idComunidad: # Comprobamos que se ha pasado idComunidad en la URL
+             return Response({"error": "Falta idComunidad en la URL"}, status=status.HTTP_400_BAD_REQUEST)
+         
+        try:    # Verificamos que la comunidad existe, si no, salta una excepción
+            Comunidad.objects.get(idComunidad=idComunidad)
+        except Comunidad.DoesNotExist:
+            return Response({"error": f"Comunidad con id {idComunidad} no encontrada."}, status=status.HTTP_404_NOT_FOUND)
+                 
         try:
             nuevas_palabras = request.data.get('palabras', [])
             if not isinstance(nuevas_palabras, list):
@@ -38,6 +55,14 @@ class PalabrasVetadasController(APIView):
         PUT /comunidad/<idComunidad>/palabras-vetadas/
         Reemplaza toda la lista de palabras vetadas de la comunidad.
         """
+        if not idComunidad: # Comprobamos que se ha pasado idComunidad en la URL
+             return Response({"error": "Falta idComunidad en la URL"}, status=status.HTTP_400_BAD_REQUEST)
+         
+        try:    # Verificamos que la comunidad existe, si no, salta una excepción
+            Comunidad.objects.get(idComunidad=idComunidad)
+        except Comunidad.DoesNotExist:
+            return Response({"error": f"Comunidad con id {idComunidad} no encontrada."}, status=status.HTTP_404_NOT_FOUND)
+
         try:
             nueva_lista = request.data.get('palabras', [])
             if not isinstance(nueva_lista, list):
@@ -53,6 +78,14 @@ class PalabrasVetadasController(APIView):
         DELETE /comunidad/<idComunidad>/palabras-vetadas/
         Elimina palabras específicas de la lista de palabras vetadas de la comunidad.
         """
+        if not idComunidad: # Comprobamos que se ha pasado idComunidad en la URL
+             return Response({"error": "Falta idComunidad en la URL"}, status=status.HTTP_400_BAD_REQUEST)
+         
+        try:    # Verificamos que la comunidad existe, si no, salta una excepción
+            Comunidad.objects.get(idComunidad=idComunidad)
+        except Comunidad.DoesNotExist:
+            return Response({"error": f"Comunidad con id {idComunidad} no encontrada."}, status=status.HTTP_404_NOT_FOUND)
+
         try:
             a_borrar = request.data.get('palabras', [])
             if not isinstance(a_borrar, list):

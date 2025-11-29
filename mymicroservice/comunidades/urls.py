@@ -15,7 +15,7 @@ urlpatterns = [
     path('<int:idComunidad>/', ComunidadController.as_view()),
     
     # --- Palabras Vetadas ---
-    # GET (todas), POST (reemplazar lista), PUT (añadir), DELETE (eliminar específica)
+    # GET (todas), POST (añadir), PUT (reemplazar lista), DELETE (eliminar específica)
     path('<int:idComunidad>/palabras-vetadas/', PalabrasVetadasController.as_view()),
 
     # --- Mis Comunidades (del usuario logueado) ---
