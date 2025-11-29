@@ -10,7 +10,7 @@ class ComunidadController(APIView):
     
     def get(self, request, idComunidad=None):
         """
-        Realiza GET comunidad/ (lista de todas las comunidades) 
+        GET comunidad/ (lista de todas las comunidades) 
         GET comunidad/{idComunidad} (comunidad especifica)
         """
         if idComunidad:
@@ -30,7 +30,7 @@ class ComunidadController(APIView):
 
     def post(self, request, idComunidad=None):
         """
-        Realiza POST en comunidad/ (crear una nueva comunidad)
+        POST en comunidad/ (crear una nueva comunidad)
         """
         datos_entrada = request.data
         
@@ -54,7 +54,7 @@ class ComunidadController(APIView):
         
     def put(self, request, idComunidad=None):
         """
-        Realiza PUT comunidad/ (Actualizar una comunidad existent)
+        PUT comunidad/ (Actualizar una comunidad existent)
         """
 
         # comprueba que la url tenga un idComunidad válido
@@ -74,7 +74,7 @@ class ComunidadController(APIView):
 
     def delete(self, request,idComunidad=None):
         """
-        Realiza DELETE comunidad/{idComunidad} (Borrar una comunidad existente)
+        DELETE comunidad/{idComunidad} (Borrar una comunidad existente)
         """
         if not idComunidad:
             return Response({"error": "Falta idComunidad en la URL"}, status=status.HTTP_400_BAD_REQUEST)
@@ -91,9 +91,9 @@ class ComunidadesUsuarioController(APIView):
 
     def get(self, request, idUsuario=None):
         """
-        Realiza GET comunidad/usuario/{idUsuario} (Obtener comunidades de un usuario específico)
+        GET comunidad/mis-comunidades/{idUsuario} 
+        Obtener todas las comunidades a las que pertenece un usuario específico.
         """
-        # GET /comunidad/usuario/{idUsuario}/
         if idUsuario is None:
              return Response({"error": "Se requiere el ID del usuario"}, status=status.HTTP_400_BAD_REQUEST)
 

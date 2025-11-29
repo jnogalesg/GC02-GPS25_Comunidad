@@ -4,7 +4,6 @@ from comunidades.models import Comunidad
 from comunidades.dto.comunidad_dto import ComunidadDTO
 from typing import List
 from comunidades.dto.artista_dto import ArtistaDTO
-from comunidades.dto.genero_dto import GeneroDTO
 
 USER_SERVICE_URL = settings.USER_MICROSERVICE_URL
 
@@ -83,6 +82,7 @@ class ComunidadDAO:
         
         # Convertimos cada modelo encontrado a DTO y lo devolvemos
         return [ComunidadDAO._to_dto(c) for c in comunidades]
+    
     @staticmethod
     def get_all_comunidades() -> List[ComunidadDTO]:
         # Pide los modelos a la BD

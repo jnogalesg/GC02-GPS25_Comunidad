@@ -4,6 +4,7 @@ from comunidades.controller.miembro_controller import MiembroController
 from comunidades.controller.publicacion_controller import PublicacionController
 from comunidades.controller.publicacionMeGusta_controller import PublicacionMeGustaController
 from comunidades.controller.personasVetadas_controller import PersonasVetadasController
+from comunidades.controller.palabrasVetadas_controller import PalabrasVetadasController
 
 urlpatterns = [
 
@@ -12,8 +13,13 @@ urlpatterns = [
     path('', ComunidadController.as_view()), 
     # GET (específica), DELETE (borrar), PUT (actualizar)
     path('<int:idComunidad>/', ComunidadController.as_view()),
+    
+    # --- Palabras Vetadas ---
+    # GET (todas), POST (reemplazar lista), PUT (añadir), DELETE (eliminar específica)
+    path('<int:idComunidad>/palabras-vetadas/', PalabrasVetadasController.as_view()),
 
     # --- Mis Comunidades (del usuario logueado) ---
+    # GET (todas las comunidades de un usuario)
     path('mis-comunidades/<int:idUsuario>/', ComunidadesUsuarioController.as_view()),
         
     # --- Miembros --- 

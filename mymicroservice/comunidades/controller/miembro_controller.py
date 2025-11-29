@@ -9,8 +9,8 @@ class MiembroController(APIView):
 
     def get(self, request, idComunidad=None, idMiembro=None):
         """
-        Maneja GET /comunidad/miembros/<idComunidad>/ (Todos los miembros de la comunidad)
-        y GET /comunidad/miembros/<idComunidad>/<idMiembro>/ (Miembro específico)
+        GET /comunidad/miembros/<idComunidad>/ (Todos los miembros de la comunidad)
+        GET /comunidad/miembros/<idComunidad>/<idMiembro>/ (Miembro específico)
         """
         try:
             if idMiembro:
@@ -29,7 +29,7 @@ class MiembroController(APIView):
 
     def post(self, request, idComunidad=None):
         """
-        Maneja POST /comunidad/miembros/<idComunidad>/
+        POST /comunidad/miembros/<idComunidad>/
         (Añade un usuario a esa comunidad)
         """
         # (Idealmente, el id_usuario vendría del TOKEN de autenticación, pero por ahora, lo leemos del body para probar)
@@ -48,7 +48,7 @@ class MiembroController(APIView):
 
     def delete(self, request, idComunidad=None, idMiembro=None):
         """
-        Maneja DELETE /comunidad/miembros/<idComunidad>/<idMiembro>/
+        DELETE /comunidad/miembros/<idComunidad>/<idMiembro>/
         (Elimina a un miembro específico de una comunidad)
         """
         if not idMiembro:
