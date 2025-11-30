@@ -2,9 +2,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from comunidades.dao.palabrasVetadas_dao import PalabrasVetadasDAO
+from comunidades.models import Comunidad
 import dataclasses
-
-from mymicroservice.comunidades.models import Comunidad
 
 class PalabrasVetadasController(APIView):
 
