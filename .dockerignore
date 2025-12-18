@@ -1,0 +1,23 @@
+# Entornos virtuales
+venv/
+.venv/
+env/
+
+# Caché
+**/__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.vscode/
+.idea/
+
+# Archivos de base de datos local SQLite (ahora usaremos MySQL)
+*.sqlite3
+db.sqlite3
+
+# Git
+.git/
+.gitignore
+
+# Logs
+*.log

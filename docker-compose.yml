@@ -1,0 +1,45 @@
+services:
+  # Base de datos MySQL
+  db:
+    image: mysql:8.0
+    container_name: mysql_comunidades
+    restart: always
+    environment:
+      MYSQL_DATABASE: db_comunidades
+      MYSQL_USER: user_comunidades
+      MYSQL_PASSWORD: password_comunidades
+      MYSQL_ROOT_PASSWORD: root_password_secreta
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - comunidades_net
+
+  # API de Comunidades
+  comunidades-api:
+    build: .
+    container_name: microservicio_comunidades
+    ports:
+      - "8084:8000"
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+    networks:
+      - comunidades_net
+    environment:
+      - DEBUG=True
+      - USER_MICROSERVICE_URL=http://host.docker.internal:3000/api/usuarios/
+      - SECRET_KEY=django-insecure-clave-secreta
+      - MYSQL_DATABASE=db_comunidades
+      - MYSQL_USER=user_comunidades
+      - MYSQL_PASSWORD=password_comunidades
+      - MYSQL_HOST=db
+
+networks:
+  comunidades_net:
+    driver: bridge
+
+volumes:
+  mysql_data:

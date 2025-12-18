@@ -77,10 +77,23 @@ WSGI_APPLICATION = 'mymicroservice.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
+# Configuración para SQLite 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
+
+# Configuración para MySQL
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': os.environ.get('MYSQL_DATABASE', 'db_comunidades'),
+        'USER': os.environ.get('MYSQL_USER', 'user_comunidades'),
+        'PASSWORD': os.environ.get('MYSQL_PASSWORD', 'password_comunidades'),
+        'HOST': os.environ.get('MYSQL_HOST', 'db'), # 'db' es el nombre del servicio en docker-compose
+        'PORT': '3306',
     }
 }
 
