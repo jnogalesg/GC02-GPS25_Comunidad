@@ -98,8 +98,7 @@ mymicroservice/
 │   ├── controller/       # 🤵 Controladores (Lógica HTTP)
 │   ├── dao/              # 👨‍🍳 Data Access Objects (Acceso a BD/APIs)
 │   ├── dto/              # 🍛 Data Transfer Objects
-│   ├── models.py         # 🧱 Modelos (ORM)
-│   └── exceptions.py     # ⚠️ Excepciones personalizadas
+│   └── models.py         # 🧱 Modelos (ORM)
 ├── Dockerfile            # 🐳 Definición de la imagen de la API
 ├── docker-compose.yml    # 🐙 Orquestación de servicios (API + MySQL)
 ├── manage.py             # 🚀 Script de gestión
